@@ -141,7 +141,8 @@ class CatalogoPage extends Component {
 
         e.preventDefault();
         form.validateFields((err, values) => {
-            values['business_line_id']=this.state.idLine;
+
+            values.bl = this.state.idLine
 
            if (!err) {
                if(activeTab==="products"){
@@ -185,7 +186,7 @@ class CatalogoPage extends Component {
 
     handleEdit = (values) => {
 
-        values['business_line_id']=this.state.idLine;
+        values.bl = this.state.idLine
 
         let {activeTab} = this.state;
 
@@ -297,6 +298,7 @@ class CatalogoPage extends Component {
         ];
 
         let { fetched, blines,catProducts,catUnidad,catCfdis,catPago,catBank,catAlmacenes,catPresupuesto} = this.props;
+
         if(!fetched)return(<MainLoader/>);
 
         return (
