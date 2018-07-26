@@ -73,7 +73,7 @@ class CatalogoPage extends Component {
         canReset:false,
         venta:false,
 
-        idClient:null,
+
         idLine:null,
         idReceivable:null,
 
@@ -141,18 +141,18 @@ class CatalogoPage extends Component {
 
         e.preventDefault();
         form.validateFields((err, values) => {
-            var ob={name:values.name,code:values.code,business_line_id:values.business_line_id}
+            values['business_line_id']=this.state.idLine;
 
            if (!err) {
                if(activeTab==="products"){
-                   console.log("mira",values)
+                   console.log("aquiva", values)
                    this.props.catProductsActions.newCatProduct(values)
                    this.setState({visible:false})
 
                }
                if(activeTab==="unitMeasure"){
                    console.log("mira unidad:",values)
-                   //this.props.unidadmedidaActions.newCatUnidad(values)
+                   this.props.unidadmedidaActions.newCatUnidad(values)
                    this.setState({visible:false})
 
                }
@@ -173,7 +173,6 @@ class CatalogoPage extends Component {
                    this.setState({visible:false})
                }
                if(activeTab==="budget"){
-                   console.log("Presupuesto", values)
                   this.props.presupuestosActions.newCatPresupuesto(values)
                    this.setState({visible:false})
                }
@@ -186,10 +185,12 @@ class CatalogoPage extends Component {
 
     handleEdit = (values) => {
 
+        values['business_line_id']=this.state.idLine;
+
         let {activeTab} = this.state;
 
                 if(activeTab==="products"){
-                    console.log("mira Productos",values)
+
                     this.props.catProductsActions.editCatProduct(values)
                         console.log("Editado con éxito");
                         message.success('Guardado con éxito');
@@ -198,71 +199,43 @@ class CatalogoPage extends Component {
 
                 }
                 if(activeTab==="unitMeasure"){
-                    console.log("mira unidad:",values)
+
                     this.props.unidadmedidaActions.editCatUnidad(values)
-                    console.log("Editado con éxito");
+
                     message.success('Guardado con éxito');
                     this.setState({visible:false})
 
                 }
                 if(activeTab==="useCFDI"){
                     this.props.usoscfdiActions.editCatCfdis(values)
-                    console.log("Editado con éxito");
+
                     message.success('Guardado con éxito');
                     this.setState({visible:false})
                 }
                 if(activeTab==="pay"){
                     this.props.formadepagoActions.editCatPago(values)
-                    console.log("Editado con éxito");
+
                     message.success('Guardado con éxito');
                     this.setState({visible:false})
                 }
                 if(activeTab==="account"){
                     this.props.cuentasbancariasActions.editCatBank(values)
-                    console.log("Editado con éxito");
+
                     message.success('Guardado con éxito');
                     this.setState({visible:false})
                 }
                 if(activeTab==="warehouse"){
                     this.props.almacenesActions.editCatAlmacen(values)
-                    console.log("Editado con éxito");
+
                     message.success('Guardado con éxito');
                     this.setState({visible:false})
                 }
                 if(activeTab==="budget"){
-                    console.log("Presupuesto", values)
                     this.props.presupuestosActions.editCatPresupuesto(values)
-                    console.log("Editado con éxito");
                     message.success('Guardado con éxito');
                     this.setState({visible:false})
                 }
 
-    };
-
-
-    onSearch = () => {
-        let basePath= "http://localhost:8000/api/ingresos/ingresos/?q=";
-        //let basePath = 'https://rancho.fixter.org/api/ingresos/ingresos/?q=';
-
-        let url = basePath+this.state.searchText;
-        //this.props.ingresosActions.getIngresos(url);
-        this.setState({canReset:true})
-
-    };
-
-    resetFilter = () => {
-        let basePath= "http://localhost:8000/api/ingresos/ingresos/";
-        //let basePath = 'https://rancho.fixter.org/api/ingresos/ingresos/';
-
-        //this.props.ingresosActions.getIngresos(basePath);
-        this.setState({
-            searchText:'',
-            canReset:false
-        });
-    };
-
-    handleSearch=(e)=>{
-        this.setState({searchText:e.target.value})
     };
 
 
@@ -295,17 +268,9 @@ class CatalogoPage extends Component {
         let {visible,canReset,activeTab,infoEdit,visibleEdit}=this.state;
         const TabPane = Tabs.TabPane;
         const columns = [
-            {
-                title: 'Nombre',
-                dataIndex: 'name',
-                key:'name',
-            },
-            {
-                title: 'Código',
-                dataIndex: 'code',
-                key:'code'
-            },
-            {title:'Linea de Negocio', dataIndex:'business_line_id',key:'business_line_id'},
+            { title: 'Nombre', dataIndex: 'name', key:'name',},
+            { title: 'Código', dataIndex: 'code', key:'code'},
+            {title:'Linea de Negocio', dataIndex:'bl',key:'bl'},
             {
                 title: 'Actions',
                 dataIndex: 'id',
@@ -333,7 +298,7 @@ class CatalogoPage extends Component {
 
         let { fetched, blines,catProducts,catUnidad,catCfdis,catPago,catBank,catAlmacenes,catPresupuesto} = this.props;
         if(!fetched)return(<MainLoader/>);
-        console.log(catPresupuesto)
+
         return (
             <Fragment>
                 <div style={{marginBottom:10, color:'rgba(0, 0, 0, 0.65)' }}>
@@ -344,15 +309,6 @@ class CatalogoPage extends Component {
 
                 <h1>Pagina de Catálogo </h1>
 
-                <div style={{paddingBottom:'1%'}}>
-                    <Input.Search
-                        enterButton
-                        onSearch={this.onSearch}
-                        onChange={this.handleSearch}
-                        style={{ width: 400 }}
-                        placeholder={'Buscar ingreso...'}
-                    />
-                </div>
 
                 <BackTop visibilityHeight={100} />
                 <div className="card-container">
